@@ -26,6 +26,8 @@ void Timer::setDelayMSec(unsigned long long int pDelayMSec)
 }
 
 
+// Method sig be like:
+// void onTakeSonarReading(unsigned long long triggerCount, Timer *timer)
 void Timer::setTriggerFunction(void (*pTriggerFunction)(unsigned long long, Timer *))
 {
     Timer::triggerFunction = pTriggerFunction;

@@ -4,7 +4,7 @@
 
 #ifndef ICEMAKERHACK_TIMER_H
 #define ICEMAKERHACK_TIMER_H
-#import "Arduino.h"
+#include <Arduino.h>
 
 class Timer
 {
