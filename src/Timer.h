@@ -2,15 +2,28 @@
 // Created by Andrew Simmons on 8/3/24.
 //
 
-#ifndef ICEMAKERHACK_TIMER_H
-#define ICEMAKERHACK_TIMER_H
+#ifndef FIRMWORK_TIMER_H
+#define FIRMWORK_TIMER_H
 #include <Arduino.h>
-
+/* Example:
+ * void getThermoReading(unsigned long long int, Timer *timer) { ... }
+ *
+ * Timer *thermoTimer = new Timer(THERMO_DELAY_MSEC, getThermoReading);
+ * ...
+ * loop(){
+ *  thermoTimer->update();
+ */
 class Timer
 {
     public:
         explicit Timer(unsigned long long int delay)
         {
+            this->delayMSec = delay;
+        }
+
+        explicit Timer(unsigned long long int delay, void (*aTriggerFunction)(unsigned long long int, Timer *))
+        {
+            this->triggerFunction = aTriggerFunction;
             this->delayMSec = delay;
         }
 
