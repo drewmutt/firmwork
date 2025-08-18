@@ -30,7 +30,9 @@
 
 class Application
 {
+
     public:
+        static Application *application;
         virtual void setup() = 0;
         virtual void loop() = 0;
         virtual void handleException(std::runtime_error error) = 0;
