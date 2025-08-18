@@ -7,7 +7,7 @@
 #include <Arduino.h>
 
 /* Example:
- * void getThermoReading(TriggerData data) { ... }
+ * void getThermoReading(Timer::TriggerData data) { ... }
  *
  * Timer *thermoTimer = new Timer(THERMO_DELAY_MSEC, getThermoReading);
  * ...
