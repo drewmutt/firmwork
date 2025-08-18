@@ -28,7 +28,7 @@ void Timer::setDelayMSec(unsigned long long int pDelayMSec)
 
 // Method sig be like:
 // void onTakeSonarReading(unsigned long long triggerCount, Timer *timer)
-void Timer::setTriggerFunction(void (*pTriggerFunction)(unsigned long long, Timer *))
+void Timer::setTriggerFunction(void (*pTriggerFunction)(TriggerData))
 {
     Timer::triggerFunction = pTriggerFunction;
 }
@@ -37,12 +37,13 @@ bool Timer::update()
 {
     unsigned long now = millis();
     unsigned long long elapsed = now - this->lastTriggerMSec;
-    if(elapsed > delayMSec)
+    if(elapsed >= delayMSec)
     {
         this->lastTriggerMSec = now;
         if(enabled)
         {
-            triggerFunction(triggerCount++, this);
+            TriggerData data = {triggerCount++, this};
+            triggerFunction(data);
         }
         return true;
     }
