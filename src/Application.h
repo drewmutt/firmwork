@@ -7,26 +7,33 @@
 
 
 #include <stdexcept>
+#include <vector>
+#include "Updateable.h"
+#include "Timer.h"
 
 
 #define APP(AppType)                                          \
-    Application* Application::application = new AppType();    \
+    Application* application = new AppType();    \
     void setup() {                                            \
         try {                                                 \
-            Application::application->setup();                \
+            application->setup();                \
         } catch (const std::runtime_error& e) {               \
-            Application::application->handleException(e);     \
+            application->handleException(e);     \
         }                                                     \
     }                                                         \
     void loop() {                                             \
         try {                                                 \
-            Application::application->loop();                 \
+            for(Updateable *updateable:application->updateables)           \
+                updateable->update();                          \
+            application->loop();                 \
         } catch (const std::runtime_error& e) {               \
-            Application::application->handleException(e);     \
+            application->handleException(e);     \
         }                                                     \
     }
 
-
+#define COPY_MESSAGE_TO_CUSTOM(CustomType, MessageDataVar, NewMessageVarName) \
+CustomType NewMessageVarName{};                                                                               \
+memcpy(&NewMessageVarName, MessageDataVar.message, MessageDataVar.dataLength)
 
 class Application
 {
@@ -36,6 +43,20 @@ class Application
         virtual void setup() = 0;
         virtual void loop() = 0;
         virtual void handleException(std::runtime_error error) = 0;
+        std::vector<Updateable *> updateables;
+
+    protected:
+
+        void addUpdateable(Updateable *updateable){
+            updateables.push_back(updateable);
+        }
+
+        Timer *createAndScheduleTimer(unsigned long long int delay, void (*aTriggerFunction)(Timer::TriggerData))
+        {
+            Timer *timer = new Timer(delay, aTriggerFunction);
+            this->addUpdateable(timer);
+            return timer;
+        }
 };
 
 

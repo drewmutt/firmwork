@@ -5,6 +5,7 @@
 #ifndef FIRMWORK_TIMER_H
 #define FIRMWORK_TIMER_H
 #include <Arduino.h>
+#include "Updateable.h"
 
 /* Example:
  * void getThermoReading(Timer::TriggerData data) { ... }
@@ -14,7 +15,7 @@
  * loop(){
  *  thermoTimer->update();
  */
-class Timer
+class Timer:public Updateable
 {
     public:
 
@@ -40,7 +41,7 @@ class Timer
         void setDelayMSec(unsigned long long int pDelayMSec);
         void setTriggerFunction(void (*triggerFunction)(TriggerData));
         void (*getTriggerFunction())(TriggerData) {return triggerFunction;}
-        bool update();
+        void update() override;
         unsigned long long int getTriggerCount() const;
         void setTriggerCount(unsigned long long int triggerCount);
         boolean getEnabled() const;

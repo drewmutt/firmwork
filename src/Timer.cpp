@@ -33,7 +33,7 @@ void Timer::setTriggerFunction(void (*pTriggerFunction)(TriggerData))
     Timer::triggerFunction = pTriggerFunction;
 }
 
-bool Timer::update()
+void Timer::update()
 {
     unsigned long now = millis();
     unsigned long long elapsed = now - this->lastTriggerMSec;
@@ -45,9 +45,9 @@ bool Timer::update()
             TriggerData data = {triggerCount++, this};
             triggerFunction(data);
         }
-        return true;
+//        return true;
     }
-    return false;
+//    return false;
 }
 
 unsigned long long int Timer::getTriggerCount() const

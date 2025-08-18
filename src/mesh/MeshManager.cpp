@@ -133,9 +133,14 @@ void MeshManager::dispatchOnDataReceived(const uint8_t *mac_addr, const uint8_t 
     memcpy(macAddress.addressBytes, mac_addr, 6);
 
     MeshManager::MessageData messageData{};
+
     messageData.fromMacAddress = macAddress;
     messageData.dataLength = len;
-    memcpy(&messageData.message, incomingData, messageData.dataLength);
+    messageData.message = malloc(messageData.dataLength);
+
+    // Kinda ballsy.. dataLength could be a partial message
+    memset(messageData.message, 0, sizeof(messageData.dataLength));
+    memcpy(messageData.message, incomingData, messageData.dataLength);
 
     for(MeshNode *node : meshNodes)
         if(memcmp(node->getMacAddress().addressBytes, mac_addr, 6) == 0)
@@ -143,6 +148,8 @@ void MeshManager::dispatchOnDataReceived(const uint8_t *mac_addr, const uint8_t 
 
     if(onDataReceivedFunction != nullptr)
         onDataReceivedFunction(messageData);
+
+    free(messageData.message);
 }
 
 

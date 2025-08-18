@@ -8,12 +8,14 @@
 
 
 #define MASTER true
-
-MeshNode MasterMeshNode({0x78, 0x21, 0x84, 0x89, 0x60, 0x74});
+MeshNode MasterMeshNode({0x44, 0x1d, 0x64, 0xf8, 0x01, 0x1c});
 
 struct MyMessage:public Message
 {
     int temp;
+    long testLong;
+    long long testReallyLong;
+    char thingy[20] = "why hi!";
 };
 
 void TestApplication::setup()
@@ -68,11 +70,11 @@ void TestApplication::onGotData(MeshManager::MessageData messageData)
     Serial.println("MAC: " + MeshManager::macAddressToString(messageData.fromMacAddress));
     Serial.println("Len: " + String(messageData.dataLength));
 
-    MyMessage msg{};
-    memcpy(&msg, &messageData.message, (int)sizeof(MyMessage));
+    COPY_MESSAGE_TO_CUSTOM(MyMessage, messageData, msg);
 
     Serial.println("Msg temp: " + String(msg.temp));
     Serial.println("Msg test: " + String(msg.test));
+    Serial.println("Msg thing: " + String(msg.thingy));
 }
 
 void TestApplication::onDataSent(MeshManager::MessageReceipt messageReceipt)

@@ -31,8 +31,8 @@ class MeshManager
         {
             MacAddress fromMacAddress;
             MeshNode *fromMeshNode = nullptr;
-            Message message;
             int dataLength;
+            void *message;
         } MessageData;
         MeshManager();
 
