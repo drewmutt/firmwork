@@ -9,23 +9,23 @@
 #include <stdexcept>
 
 
-// Define once (e.g., in a reusable header)
 #define APP(AppType)                                          \
-    Application *application = new AppType();                            \
-    void setup() {                                                           \
-        try {                                                                \
-            application->setup();                               \
-        } catch (const std::runtime_error& e) {                              \
-            application->handleException(e);                    \
-        }                                                                    \
-    }                                                                        \
-    void loop() {                                                            \
-        try {                                                                \
-            application->loop();                                \
-        } catch (const std::runtime_error& e) {                              \
-            application->handleException(e);                    \
-        }                                                                    \
+    Application* Application::application = new AppType();    \
+    void setup() {                                            \
+        try {                                                 \
+            Application::application->setup();                \
+        } catch (const std::runtime_error& e) {               \
+            Application::application->handleException(e);     \
+        }                                                     \
+    }                                                         \
+    void loop() {                                             \
+        try {                                                 \
+            Application::application->loop();                 \
+        } catch (const std::runtime_error& e) {               \
+            Application::application->handleException(e);     \
+        }                                                     \
     }
+
 
 
 class Application
