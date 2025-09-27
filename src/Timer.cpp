@@ -35,29 +35,25 @@ void Timer::setTriggerFunction(void (*pTriggerFunction)(TriggerData))
 
 void Timer::update()
 {
+    if(!enabled)
+        return;
+
     unsigned long now = millis();
     unsigned long long elapsed = now - this->lastTriggerMSec;
     if(elapsed >= delayMSec)
     {
         this->lastTriggerMSec = now;
-        if(enabled)
-        {
-            TriggerData data = {triggerCount++, this};
+        TriggerData data = {triggerCount++, this};
+        if (triggerFunction)
             triggerFunction(data);
-        }
-//        return true;
+        if(isOneShot)
+            enabled = false;
     }
-//    return false;
 }
 
 unsigned long long int Timer::getTriggerCount() const
 {
     return triggerCount;
-}
-
-void Timer::setTriggerCount(unsigned long long int pTriggerCount)
-{
-    Timer::triggerCount = pTriggerCount;
 }
 
 boolean Timer::getEnabled() const

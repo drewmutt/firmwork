@@ -44,19 +44,18 @@ class Application
         virtual void loop() = 0;
         virtual void handleException(std::runtime_error error) = 0;
         std::vector<Updateable *> updateables;
-
-    protected:
-
         void addUpdateable(Updateable *updateable){
             updateables.push_back(updateable);
         }
-
         Timer *createAndScheduleTimer(unsigned long long int delay, void (*aTriggerFunction)(Timer::TriggerData))
         {
             Timer *timer = new Timer(delay, aTriggerFunction);
             this->addUpdateable(timer);
             return timer;
         }
+
+    protected:
+
 };
 
 

@@ -19,43 +19,32 @@ class Timer:public Updateable
 {
     public:
 
-        typedef struct TriggerData{
-            unsigned long long int triggerCount;
-            Timer *timer;
-        } TriggerData;
+        struct TriggerData { unsigned long long count; Timer* timer; };
 
-        explicit Timer(unsigned long long int delay)
-        {
-            this->delayMSec = delay;
-        }
+        Timer(unsigned long long delay, std::function<void(TriggerData)> cb, bool oneShot = true)
+                : delayMSec(delay), triggerFunction(std::move(cb)), isOneShot(oneShot) {}
 
-        explicit Timer(unsigned long long int delay, void (*aTriggerFunction)(TriggerData))
-        {
-            this->triggerFunction = aTriggerFunction;
-            this->delayMSec = delay;
-        }
+        void setTriggerFunction(std::function<void(TriggerData)> cb) { triggerFunction = std::move(cb); }
 
         unsigned long long int getLastTriggerMSec() const;
         void setLastTriggerMSec(unsigned long long int lastTriggerMSec);
         unsigned long long int getDelayMSec() const;
         void setDelayMSec(unsigned long long int pDelayMSec);
         void setTriggerFunction(void (*triggerFunction)(TriggerData));
-        void (*getTriggerFunction())(TriggerData) {return triggerFunction;}
         void update() override;
         unsigned long long int getTriggerCount() const;
-        void setTriggerCount(unsigned long long int triggerCount);
+//        void setTriggerCount(unsigned long long int triggerCount);
         boolean getEnabled() const;
         void setEnabled(boolean enabled);
-
-
+        void setIsOneShot(bool aIsOneShot) { this->isOneShot = aIsOneShot; }
 
     private:
-        unsigned long long lastTriggerMSec = 0;
-        unsigned long long delayMSec = 0;
-        void (*triggerFunction)(TriggerData);
-        unsigned long long triggerCount = 0;
-        boolean enabled = true;
-
+        unsigned long long delayMSec{};
+        unsigned long long lastTriggerMSec{};
+        unsigned long long triggerCount{};
+        bool enabled{true};
+        bool isOneShot{false};
+        std::function<void(TriggerData)> triggerFunction;
 };
 
 

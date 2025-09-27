@@ -10,6 +10,8 @@
 #include <vector>
 #include "MeshNode.h"
 #include <esp_now.h>
+#include <ArduinoOTA.h>
+#include "Application.h"
 
 typedef struct Message
 {
@@ -54,23 +56,27 @@ class MeshManager
             );
         }
 
+        void setOnDataSentFunction(std::function<void(MessageReceipt)> aOnDataSentFunction);
+        void setOnDataReceivedFunction(std::function<void(MessageData)> aOnDataReceivedFunction);
 
-        void setOnDataSentFunction(void (*aOnDataSentFunction)(MessageReceipt));
-        void setOnDataReceivedFunction(void (*aOnDataReceivedFunction)(MessageData));
+        static bool connectToWifi(String ssid, String password, int attempts = 5, int delayBetweenAttemptsMSec = 500);
+        bool startListeningForOTA(unsigned long syncWaitTimeMSec = 0, ArduinoOTAClass::THandlerFunction onStart = nullptr, ArduinoOTAClass::THandlerFunction_Progress onProgress = nullptr, ArduinoOTAClass::THandlerFunction_Error onError = nullptr, ArduinoOTAClass::THandlerFunction onEnd = nullptr);
 
+        static tm getTimeFromNTPServer();
+        static bool disconnectFromWifi();
+        Timer *otaTimeoutTimer;
     private:
-        static void IRAM_ATTR OnDataSent(const uint8_t *mac_addr, esp_now_send_status_t status);
-        static void IRAM_ATTR OnDataReceived(const uint8_t * mac_addr, const uint8_t *incomingData, int len);
+        static void IRAM_ATTR OnDataSent(const esp_now_send_info_t *tx_info, esp_now_send_status_t status);
+        static void IRAM_ATTR OnDataReceived(const esp_now_recv_info_t * info, const uint8_t *incomingData, int len);
 
         std::vector<MeshNode *> meshNodes;
-        void (*onDataSentFunction)(MessageReceipt) = nullptr;
-        void (*onDataReceivedFunction)(MessageData) = nullptr;
+        std::function<void(MessageReceipt)> onDataSentFunction;
+        std::function<void(MessageData)> onDataReceivedFunction;
 
     protected:
         void dispatchOnDataSent(const uint8_t *mac_addr, esp_now_send_status_t status);
         void dispatchOnDataReceived(const uint8_t * mac_addr, const uint8_t *incomingData, int len);
         static std::vector<MeshManager *> managers;
-
 
 };
 

@@ -2,9 +2,11 @@
 // Created by Andrew Simmons on 8/17/25.
 //
 
+
 #include "MeshManager.h"
 #include "ErrorUtil.h"
 #include "MeshNode.h"
+
 
 std::vector<MeshManager*> MeshManager::managers;
 
@@ -48,7 +50,7 @@ void MeshManager::startESPNow()
     }
 
     esp_now_register_send_cb(OnDataSent);
-    esp_now_register_recv_cb(esp_now_recv_cb_t(OnDataReceived));
+    esp_now_register_recv_cb(OnDataReceived);
 }
 
 void MeshManager::addMeshNode(MeshNode* node)
@@ -93,23 +95,28 @@ void MeshManager::changeSelfMacAddress(MacAddress macAddress)
 }
 
 
-void MeshManager::OnDataSent(const uint8_t *mac_addr, esp_now_send_status_t status)
+void MeshManager::OnDataSent(const esp_now_send_info_t *tx_info, esp_now_send_status_t status)
 {
+    if (!tx_info) return;
+    const uint8_t *mac_addr = tx_info->des_addr;
     for(MeshManager *manager : managers)
         manager->dispatchOnDataSent(mac_addr, status);
 }
 
-void MeshManager::OnDataReceived(const uint8_t *mac_addr, const uint8_t *incomingData, int len)
+void MeshManager::OnDataReceived(const esp_now_recv_info_t *info, const uint8_t *incomingData, int len)
 {
+    if (!info) return;
+    const uint8_t *mac_addr = info->src_addr;
     for(MeshManager *manager : managers)
         manager->dispatchOnDataReceived(mac_addr, incomingData, len);
 }
 
 
-void MeshManager::setOnDataSentFunction(void (*aOnDataSentMethod)(MeshManager::MessageReceipt))
+void MeshManager::setOnDataSentFunction(std::function<void(MeshManager::MessageReceipt)> aOnDataSentMethod)
 {
-    this->onDataSentFunction = aOnDataSentMethod;
+    this->onDataSentFunction = std::move(aOnDataSentMethod);
 }
+
 
 void MeshManager::dispatchOnDataSent(const uint8_t *mac_addr, esp_now_send_status_t status)
 {
@@ -117,15 +124,15 @@ void MeshManager::dispatchOnDataSent(const uint8_t *mac_addr, esp_now_send_statu
     memcpy(macAddress.addressBytes, mac_addr, 6);
     bool wasSuccessful = status == ESP_NOW_SEND_SUCCESS;
     MessageReceipt receipt(macAddress, wasSuccessful);
-    if(onDataSentFunction != nullptr)
+    if(onDataSentFunction)
         onDataSentFunction(receipt);
 }
 
-
-void MeshManager::setOnDataReceivedFunction(void (*aOnDataReceivedFunction)(MessageData))
+void MeshManager::setOnDataReceivedFunction(std::function<void(MessageData)> aOnDataReceivedFunction)
 {
-    this->onDataReceivedFunction = aOnDataReceivedFunction;
+    this->onDataReceivedFunction = std::move(aOnDataReceivedFunction);
 }
+
 
 void MeshManager::dispatchOnDataReceived(const uint8_t *mac_addr, const uint8_t *incomingData, int len)
 {
@@ -146,16 +153,107 @@ void MeshManager::dispatchOnDataReceived(const uint8_t *mac_addr, const uint8_t 
         if(memcmp(node->getMacAddress().addressBytes, mac_addr, 6) == 0)
             messageData.fromMeshNode = node;
 
-    if(onDataReceivedFunction != nullptr)
+    if(onDataReceivedFunction)
         onDataReceivedFunction(messageData);
 
     free(messageData.message);
 }
 
+/*
+ * ArduinoOTAClass::THandlerFunction start = [](unsigned int progress, unsigned int total) {
+            lcd.setCursor(0, 1);
+            lcd.printf("Progress: %u%%", (progress / (total / 100)));
+            lcd.display();
+    }
+ */
+bool MeshManager::startListeningForOTA(unsigned long syncWaitTimeMSec, ArduinoOTAClass::THandlerFunction onStart, ArduinoOTAClass::THandlerFunction_Progress onProgress, ArduinoOTAClass::THandlerFunction_Error onError, ArduinoOTAClass::THandlerFunction onEnd)
+{
+    if(WiFi.status() != WL_CONNECTED)
+        return false;
 
+    ArduinoOTAClass &aClass = ArduinoOTA;
+    if(onStart != nullptr)
+        aClass.onStart(onStart);
+    if(onProgress != nullptr)
+        aClass.onProgress(onProgress);
+    if(onError != nullptr)
+        aClass.onError(onError);
+    if(onEnd != nullptr)
+        aClass.onEnd(onEnd);
+
+    ArduinoOTA.begin();
+
+    // HANG. Waiting...
+    if(syncWaitTimeMSec > 0)
+    {
+        unsigned long startTime = millis();
+
+        while(WiFi.isConnected())
+        {
+            Serial.println("OTA waiting");
+            ArduinoOTA.handle();
+            delay(1000);
+            if(millis() - startTime > syncWaitTimeMSec)
+                break;
+        }
+        Serial.println("OTA timeout");
+    }
+
+    return false;
+}
+
+bool MeshManager::connectToWifi(String ssid, String password, int attempts, int delayBetweenAttempts)
+{
+    WiFi.begin(ssid, password);  // Connect to WiFi - defaults to WiFi Station mode
+    bool success = false;
+    for(int i = 0; i <= attempts; i++)
+    {
+        if(WiFi.status() == WL_CONNECTED)
+        {
+            success = true;
+            break;
+        }
+        delay(delayBetweenAttempts);
+    }
+    return success;
+}
+
+bool MeshManager::disconnectFromWifi()
+{
+    bool success = WiFi.disconnect(true);
+    WiFi.mode(WIFI_OFF);
+    return success;
+}
+
+tm MeshManager::getTimeFromNTPServer()
+{
+    if(!WiFi.isConnected())
+        return {};
+
+    const char* ntpServer = "pool.ntp.org";
+    const long  gmtOffset_sec = -21600; //-18000;
+    const long  daylightOffset_sec = 3600;
+
+    configTime(gmtOffset_sec, daylightOffset_sec, ntpServer);
+
+    struct tm timeinfo{};
+    struct tm updatedTimeinfo{};
+
+    if (getLocalTime(&timeinfo)) {
+        updatedTimeinfo.tm_sec = timeinfo.tm_sec;
+        updatedTimeinfo.tm_min = timeinfo.tm_min;
+        updatedTimeinfo.tm_hour = timeinfo.tm_hour;
+        updatedTimeinfo.tm_wday = timeinfo.tm_wday + 1;
+        updatedTimeinfo.tm_mon = timeinfo.tm_mon + 1;
+        updatedTimeinfo.tm_year = timeinfo.tm_year - 100;
+        return updatedTimeinfo;
+    }
+    return {};
+}
 
 MeshManager::MessageReceipt::MessageReceipt(MacAddress address, bool success)
 {
     this->recipientMacAddress = address;
     this->success = success;
 }
+

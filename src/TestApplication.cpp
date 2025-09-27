@@ -5,18 +5,20 @@
 #include <HardwareSerial.h>
 #include "TestApplication.h"
 #include "mesh/MeshNode.h"
+#include "ErrorUtil.h"
+#include "Wifi.h"
 
 
-#define MASTER true
+#define MASTER false
 MeshNode MasterMeshNode({0x44, 0x1d, 0x64, 0xf8, 0x01, 0x1c});
 
-struct MyMessage:public Message
+bool TryingOTA = false;
+typedef struct MyMessage: public Message
 {
-    int temp;
-    long testLong;
-    long long testReallyLong;
-    char thingy[20] = "why hi!";
-};
+    char propertyName[30] = {};
+    double propertyValue = 0;
+    byte unitType;
+} SensorMessage;
 
 void TestApplication::setup()
 {
@@ -24,7 +26,36 @@ void TestApplication::setup()
     delay(2000);
     Serial.println("Role: " + String(MASTER==true?"MASTER":"SLAVE"));;
 
+    WiFi.setHostname("truckESP32");
+
+    Serial.println("Connecting to MunchausenByProxy...");
+    bool success = MeshManager::connectToWifi("MunchausenByProxy", "apples2apples", 3, 1000);
+    TryingOTA = true;
+
+
+    Serial.println("Success?" + String(success));;
+
+    Serial.println("Ready");
+    Serial.print("IP address: ");
+    Serial.println(WiFi.localIP());
+
+    if(success)
+    {
+        Serial.println("Starting OTA ");
+        meshManager->startListeningForOTA(0, []
+                                          {
+                                              Serial.println("OTA Started");;
+                                          }, [](unsigned int progress, unsigned int total)
+                                          {
+                                              Serial.println("Progress: " + String(progress) + " / " + String(total));;
+                                          });
+    }
+
+    Serial.println("Dis from wifi...");
+//    MeshManager::disconnectFromWifi();
+    Serial.println("dunet from wifi...");;
     meshManager->startESPNow();
+    Serial.println("started ESPNow");
 
     if (MASTER)
     {
@@ -44,17 +75,24 @@ void TestApplication::setup()
 
 void TestApplication::loop()
 {
-    Serial.println("hey");
-    delay(5000);
-
-    if(!MASTER)
+    ArduinoOTA.handle();
+    if(!WiFi.isConnected())
     {
-        MyMessage msg{};
-        msg.temp = 91;
-        msg.test = 43;
-        meshManager->sendMessage(&MasterMeshNode, msg);
-        Serial.println("sent message");
+        if (!MASTER)
+        {
+            MyMessage msg;
+            msg.propertyName[0] = 'X';
+            msg.unitType = 1;
+            msg.propertyValue = 100;
+
+            esp_err_t i = meshManager->sendMessage(&MasterMeshNode, msg);
+            Serial.println("sent message.. " + ErrorUtil::getDescriptionFromESPError(i));
+            delay(1000);
+        }
     }
+    delay(1000);
+    Serial.println("loop");
+
 }
 
 void TestApplication::handleException(std::runtime_error error)
@@ -72,9 +110,10 @@ void TestApplication::onGotData(MeshManager::MessageData messageData)
 
     COPY_MESSAGE_TO_CUSTOM(MyMessage, messageData, msg);
 
-    Serial.println("Msg temp: " + String(msg.temp));
+    Serial.println("Msg prop name: " + String(msg.propertyName));
     Serial.println("Msg test: " + String(msg.test));
-    Serial.println("Msg thing: " + String(msg.thingy));
+    Serial.println("Msg prop val: " + String(msg.propertyValue));
+    Serial.println("Msg prop unit: " + String(msg.unitType));
 }
 
 void TestApplication::onDataSent(MeshManager::MessageReceipt messageReceipt)
