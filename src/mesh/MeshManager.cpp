@@ -43,7 +43,7 @@ String MeshManager::macAddressToCArrayInitString(MacAddress baseMac)
 
 void MeshManager::startESPNow()
 {
-    WiFi.mode(WIFI_STA);
+    WiFiClass::mode(WIFI_STA);
     esp_err_t status = esp_now_init();
     if (status != ESP_OK) {
         throw std::runtime_error(ErrorUtil::getDescriptionFromESPError(status).c_str());
