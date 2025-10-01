@@ -1,0 +1,8 @@
+{
+  "name": "Firmwork-Graphics",
+  "version": "1.0.0",
+  "description": "Firmwork optional graphics module",
+  "frameworks": "*",
+  "platforms": "*",
+  "build": { "includeDir": "include" }
+}

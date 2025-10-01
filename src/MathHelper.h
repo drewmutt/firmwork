@@ -6,8 +6,6 @@
 #define ROBOTOPO_MATHHELPER_H
 
 
-typedef struct PixelPoint { byte x,y;} PixelPoint;
-typedef struct PixelSize { byte w,h; } PixelSize;
 typedef struct ULLongRange { unsigned long long min, max; } ULongRange;
 typedef struct FloatRange { float min, max; } FloatRange;
 typedef struct LRange{ long min, max; } LRange;

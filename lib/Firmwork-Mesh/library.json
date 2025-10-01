@@ -1,0 +1,9 @@
+{
+  "name": "Firmwork-Mesh",
+  "version": "1.0.0",
+  "description": "Firmwork optional mesh module (ESP-NOW/WiFi/OTA helpers)",
+  "frameworks": "*",
+  "platforms": "*",
+  "dependencies": [
+  ]
+}

@@ -66,7 +66,7 @@ class MeshManager
         static bool disconnectFromWifi();
         Timer *otaTimeoutTimer;
     private:
-        static void IRAM_ATTR OnDataSent(const esp_now_send_info_t *tx_info, esp_now_send_status_t status);
+        static void IRAM_ATTR OnDataSent(const uint8_t *mac_addr, esp_now_send_status_t status);
         static void IRAM_ATTR OnDataReceived(const esp_now_recv_info_t * info, const uint8_t *incomingData, int len);
 
         std::vector<MeshNode *> meshNodes;

@@ -4,6 +4,9 @@
 
 
 #include "MeshManager.h"
+
+#include <stdexcept>
+
 #include "ErrorUtil.h"
 #include "MeshNode.h"
 
@@ -95,10 +98,8 @@ void MeshManager::changeSelfMacAddress(MacAddress macAddress)
 }
 
 
-void MeshManager::OnDataSent(const esp_now_send_info_t *tx_info, esp_now_send_status_t status)
+void MeshManager::OnDataSent(const uint8_t *mac_addr, esp_now_send_status_t status)
 {
-    if (!tx_info) return;
-    const uint8_t *mac_addr = tx_info->des_addr;
     for(MeshManager *manager : managers)
         manager->dispatchOnDataSent(mac_addr, status);
 }
@@ -256,4 +257,3 @@ MeshManager::MessageReceipt::MessageReceipt(MacAddress address, bool success)
     this->recipientMacAddress = address;
     this->success = success;
 }
-

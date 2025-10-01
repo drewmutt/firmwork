@@ -1,0 +1,10 @@
+{
+  "name": "Firmwork-Motion",
+  "version": "1.0.0",
+  "description": "Firmwork optional motion module",
+  "dependencies": [
+    { "name": "waspinator/AccelStepper", "version": "*" }
+  ],
+  "frameworks": "*",
+  "platforms": "*"
+}
