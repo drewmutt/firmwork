@@ -10,7 +10,11 @@
 typedef struct PixelPoint { int x, y; } PixelPoint;
 typedef struct PixelSize  { int w, h; } PixelSize;
 typedef struct PixelRect  { PixelPoint p; PixelSize s; } PixelRect;
-typedef int Color;
+typedef uint32_t Color;
+typedef struct ColorRGB{ uint8_t r, g, b; } ColorRGB;
+
+// h in degrees [0,360), s in [0,1], v in [0,1]
+typedef struct ColorHSV { float h, s, v; } ColorHSV;
 
 class Graphics {
 public:

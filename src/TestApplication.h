@@ -8,6 +8,7 @@
 #include "mesh/MacAddress.h"
 #include "mesh/MeshManager.h"
 #include <Firmwork/M5Graphics.h>
+#include <Firmwork/GraphicsHelper.h>
 
 class TestApplication: public Application
 {

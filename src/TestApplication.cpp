@@ -23,9 +23,9 @@ typedef struct MyMessage: public Message
 void TestApplication::setup()
 {
     Serial.begin(9600);
+
     delay(2000);
     Serial.println("Role: " + String(MASTER==true?"MASTER":"SLAVE"));;
-
     WiFi.setHostname("truckESP32");
 
     Serial.println("Connecting to MunchausenByProxy...");
