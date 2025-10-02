@@ -24,6 +24,10 @@ void TestApplication::setup()
 {
     Serial.begin(9600);
 
+    Bounds bounds({50,50}, {500, 1000});
+    auto top_left_of = bounds.topLeftOf({100, 200}, BoundsAnchor::BOTTOM_RIGHT);
+    Serial.println("Top left of: " + String(top_left_of.x) + ", " + String(top_left_of.y));
+
     delay(2000);
     Serial.println("Role: " + String(MASTER==true?"MASTER":"SLAVE"));;
     WiFi.setHostname("truckESP32");

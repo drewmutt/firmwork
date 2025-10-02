@@ -7,14 +7,21 @@
 #include <Arduino.h> // for String
 
 // New typedefs for clarity in graphics APIs
-typedef struct PixelPoint { int x, y; } PixelPoint;
-typedef struct PixelSize  { int w, h; } PixelSize;
+typedef struct PixelPoint { int x, y; PixelPoint() = default;
+    PixelPoint(int x, int y);
+    void offset();
+} PixelPoint;
+
+typedef struct PixelSize  { int w, h; PixelSize() = default;
+    PixelSize(int w, int h);
+} PixelSize;
 typedef struct PixelRect  { PixelPoint p; PixelSize s; } PixelRect;
 typedef uint32_t Color;
 typedef struct ColorRGB{ uint8_t r, g, b; } ColorRGB;
 
 // h in degrees [0,360), s in [0,1], v in [0,1]
 typedef struct ColorHSV { float h, s, v; } ColorHSV;
+typedef float FontSize;
 
 class Graphics {
 public:
@@ -53,9 +60,20 @@ public:
     virtual void fillArc          (PixelPoint center, int r0, int r1, float angle0, float angle1, Color color) = 0;
 
     // Text & fills (prefer const char* to avoid Arduino dependency here)
-    virtual void drawString       (PixelPoint pt, const char* text) = 0;
+    virtual void drawTextChars(PixelPoint pt, const char* text) = 0;
+    virtual void drawTextChars(PixelPoint pt, FontSize fontSize, const char* text) = 0;
+    virtual void drawTextString(PixelPoint pt, String string) = 0;
+    virtual void drawTextString(PixelPoint pt, FontSize fontSize, String string) = 0;
+    virtual void drawTextPrintf(PixelPoint pt, const char* fmt, ...) = 0;
+    virtual void drawTextPrintf(PixelPoint pt, FontSize fontSize, const char* fmt, ...) = 0;
+
     virtual void floodFill        (PixelPoint seed, Color color) = 0;
     virtual void drawGradientLine (PixelPoint p0, PixelPoint p1, Color colorStart, Color colorEnd) = 0;
+
+    virtual void clearScreen (Color color) = 0;
+    virtual void clearScreen () = 0;
+
+    virtual FontSize getDefaultFontSize() = 0;
 };
 
 #endif // FIRMWORK_GRAPHICS_H

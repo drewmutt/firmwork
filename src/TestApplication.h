@@ -6,9 +6,15 @@
 #define FIRMWORK_TESTAPPLICATION_H
 #include "Application.h"
 #include "mesh/MacAddress.h"
+#include <Firmwork/Graphics.h>
 #include "mesh/MeshManager.h"
 #include <Firmwork/M5Graphics.h>
 #include <Firmwork/GraphicsHelper.h>
+#include "Application.h"
+#include "mesh/MacAddress.h"
+#include "mesh/MeshManager.h"
+#include <Firmwork/M5Graphics.h>
+#include <Firmwork/Bounds.h>
 
 class TestApplication: public Application
 {

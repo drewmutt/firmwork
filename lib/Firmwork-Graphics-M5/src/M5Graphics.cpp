@@ -93,10 +93,43 @@ void M5Graphics::fillArc(PixelPoint center, int r0, int r1, float angle0, float 
 }
 
 // Text & fills
-void M5Graphics::drawString(PixelPoint pt, const char* text) {
-    // Use cursor+print for portability across M5GFX versions
+void M5Graphics::drawTextChars(PixelPoint pt, const char* text) {
+    drawTextChars(pt, getDefaultFontSize(), text);
+}
+
+void M5Graphics::drawTextChars(PixelPoint pt, FontSize fontSize, const char* text)
+{
+    gfx_.setTextSize(fontSize);
     gfx_.setCursor(pt.x, pt.y);
     gfx_.print(text ? text : "");
+}
+
+void M5Graphics::drawTextString(PixelPoint pt, FontSize fontSize, String string)
+{
+    drawTextChars(pt, fontSize, string.c_str());
+}
+
+void M5Graphics::drawTextString(PixelPoint pt, String string)
+{
+    drawTextChars(pt, getDefaultFontSize(), string.c_str());
+}
+
+void M5Graphics::drawTextPrintf(PixelPoint pt, const char* fmt, ...) {
+
+    va_list arg;
+    va_start(arg, fmt);
+    drawTextPrintf(pt, getDefaultFontSize(), fmt, arg);
+    va_end(arg);
+}
+
+void M5Graphics::drawTextPrintf(PixelPoint pt, FontSize fontSize, const char* fmt, ...)
+{
+    gfx_.setTextSize(fontSize);
+    gfx_.setCursor(pt.x, pt.y);
+    va_list arg;
+    va_start(arg, fmt);
+    vprintf(fmt, arg);
+    va_end(arg);
 }
 
 void M5Graphics::floodFill(PixelPoint seed, Color color) {
@@ -112,3 +145,17 @@ void M5Graphics::drawGradientLine(PixelPoint p0, PixelPoint p1, Color colorStart
     gfx_.drawLine(p0.x, p0.y, p1.x, p1.y, FW_TO565(colorStart));
 #endif
 }
+
+void M5Graphics::clearScreen(Color color)
+{
+    gfx_.setBaseColor(FW_TO565(color));
+    gfx_.clear();
+}
+
+void M5Graphics::clearScreen()
+{
+    gfx_.setBaseColor(BLACK);
+    gfx_.clear();
+}
+
+

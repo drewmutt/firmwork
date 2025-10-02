@@ -46,9 +46,19 @@ public:
     void fillArc          (PixelPoint center, int r0, int r1, float angle0, float angle1, Color color) override;
 
     // Text & fills
-    void drawString       (PixelPoint pt, const char* text) override;
+    void drawTextChars(PixelPoint pt, const char* text) override;
+    void drawTextChars(PixelPoint pt, FontSize fontSize, const char* text) override;
+    void drawTextString(PixelPoint pt, String string) override;
+    void drawTextString(PixelPoint pt, FontSize fontSize, String string) override;
+    void drawTextPrintf(PixelPoint pt, const char* fmt, ...) override;
+    void drawTextPrintf(PixelPoint pt, FontSize fontSize, const char* fmt, ...) override;
+
     void floodFill        (PixelPoint seed, Color color) override;
     void drawGradientLine (PixelPoint p0, PixelPoint p1, Color colorStart, Color colorEnd) override;
+    void clearScreen(Color color) override;
+    void clearScreen() override;
+
+    FontSize getDefaultFontSize() override { return 1; };
 
 private:
     M5GFX& gfx_;
