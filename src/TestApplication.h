@@ -9,7 +9,7 @@
 #include <Firmwork/Graphics.h>
 #include "mesh/MeshManager.h"
 #include <Firmwork/M5Graphics.h>
-#include <Firmwork/GraphicsHelper.h>
+#include <Firmwork/Colors.h>
 #include "Application.h"
 #include "mesh/MacAddress.h"
 #include "mesh/MeshManager.h"

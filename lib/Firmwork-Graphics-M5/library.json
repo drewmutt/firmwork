@@ -5,7 +5,8 @@
   "frameworks": "*",
   "platforms": "*",
   "dependencies": [
-    { "name": "M5GFX", "owner": "m5stack" }
+    { "name": "M5GFX", "owner": "m5stack" },
+    { "name": "M5Unified", "owner": "m5stack" }
   ],
   "build": { "includeDir": "include" }
 }

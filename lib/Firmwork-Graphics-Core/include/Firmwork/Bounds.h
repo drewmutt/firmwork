@@ -5,7 +5,7 @@
 #ifndef FIRMWORK_BOUNDS_H
 #define FIRMWORK_BOUNDS_H
 
-#include "Graphics.h"
+#include "GraphicsTypes.h"
 
 enum class BoundsAnchor {
     TOP_LEFT,
@@ -20,11 +20,12 @@ enum class BoundsAnchor {
 };
 
 struct Bounds {
-        PixelPoint pt = {0, 0};
-        PixelSize size;
+        PixelPoint const pt = {0, 0};
+        PixelSize const size = {0, 0};
         BoundsAnchor anchor = BoundsAnchor::TOP_LEFT;
     
         explicit Bounds(PixelSize size) : size(size) {};
+        explicit Bounds() = default;
         explicit Bounds(PixelPoint origin, PixelSize size): pt(origin), size(size) {};
 
         PixelPoint middleCenter() { return convertAnchorPoint(pt, size, anchor, BoundsAnchor::MIDDLE_CENTER); }
@@ -56,38 +57,39 @@ struct Bounds {
             if (fromAnchor == toAnchor)
                 return pt;
             
-            PixelPoint result = pt;
+            int x = pt.x;
+            int y = pt.y;
 
             // First convert to TOP_LEFT
             switch (fromAnchor)
             {
             case BoundsAnchor::TOP_RIGHT:
-                result.x -= size.w;
+                x -= size.w;
                 break;
             case BoundsAnchor::TOP_CENTER:
-                result.x -= size.w / 2;
+                x -= size.w / 2;
                 break;
             case BoundsAnchor::MIDDLE_LEFT:
-                result.y -= size.h / 2;
+                y -= size.h / 2;
                 break;
             case BoundsAnchor::MIDDLE_RIGHT:
-                result.x -= size.w;
-                result.y -= size.h / 2;
+                x -= size.w;
+                y -= size.h / 2;
                 break;
             case BoundsAnchor::MIDDLE_CENTER:
-                result.x -= size.w / 2;
-                result.y -= size.h / 2;
+                x -= size.w / 2;
+                y -= size.h / 2;
                 break;
             case BoundsAnchor::BOTTOM_LEFT:
-                result.y -= size.h;
+                y -= size.h;
                 break;
             case BoundsAnchor::BOTTOM_RIGHT:
-                result.x -= size.w;
-                result.y -= size.h;
+                x -= size.w;
+                y -= size.h;
                 break;
             case BoundsAnchor::BOTTOM_CENTER:
-                result.x -= size.w / 2;
-                result.y -= size.h;
+                x -= size.w / 2;
+                y -= size.h;
                 break;
             default:
                 break;
@@ -97,38 +99,38 @@ struct Bounds {
             switch (toAnchor)
             {
             case BoundsAnchor::TOP_RIGHT:
-                result.x += size.w;
+                x += size.w;
                 break;
             case BoundsAnchor::TOP_CENTER:
-                result.x += size.w / 2;
+                x += size.w / 2;
                 break;
             case BoundsAnchor::MIDDLE_LEFT:
-                result.y += size.h / 2;
+                y += size.h / 2;
                 break;
             case BoundsAnchor::MIDDLE_RIGHT:
-                result.x += size.w;
-                result.y += size.h / 2;
+                x += size.w;
+                y += size.h / 2;
                 break;
             case BoundsAnchor::MIDDLE_CENTER:
-                result.x += size.w / 2;
-                result.y += size.h / 2;
+                x += size.w / 2;
+                y += size.h / 2;
                 break;
             case BoundsAnchor::BOTTOM_LEFT:
-                result.y += size.h;
+                y += size.h;
                 break;
             case BoundsAnchor::BOTTOM_RIGHT:
-                result.x += size.w;
-                result.y += size.h;
+                x += size.w;
+                y += size.h;
                 break;
             case BoundsAnchor::BOTTOM_CENTER:
-                result.x += size.w / 2;
-                result.y += size.h;
+                x += size.w / 2;
+                y += size.h;
                 break;
             default:
                 break;
             }
 
-            return result;
+            return PixelPoint{x, y};
         }
 
 };

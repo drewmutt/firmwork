@@ -19,10 +19,10 @@ public:
     void drawFastHLine    (PixelPoint start, int w, Color color) override;
 
     // Rectangles
-    void fillRect         (PixelRect rect, Color color) override;
-    void drawRect         (PixelRect rect, Color color) override;
-    void drawRoundRect    (PixelRect rect, int r, Color color) override;
-    void fillRoundRect    (PixelRect rect, int r, Color color) override;
+    void fillRect         (PixelPoint topLeft, PixelSize size, Color color);
+    void drawRect         (PixelPoint topLeft, PixelSize size, Color color);
+    void drawRoundRect    (PixelPoint topLeft, PixelSize size, int r, Color color);
+    void fillRoundRect    (PixelPoint topLeft, PixelSize size, int r, Color color);
 
     // Circles & Ellipses
     void drawCircle       (PixelPoint center, int r, Color color) override;
@@ -46,17 +46,16 @@ public:
     void fillArc          (PixelPoint center, int r0, int r1, float angle0, float angle1, Color color) override;
 
     // Text & fills
-    void drawTextChars(PixelPoint pt, const char* text) override;
-    void drawTextChars(PixelPoint pt, FontSize fontSize, const char* text) override;
-    void drawTextString(PixelPoint pt, String string) override;
-    void drawTextString(PixelPoint pt, FontSize fontSize, String string) override;
-    void drawTextPrintf(PixelPoint pt, const char* fmt, ...) override;
-    void drawTextPrintf(PixelPoint pt, FontSize fontSize, const char* fmt, ...) override;
+    void drawTextChars(PixelPoint pt, FontSize fontSize, const char* text, Color color) override;
+    void drawTextPrintf(PixelPoint pt, FontSize fontSize, Color color, const char* fmt, ...) override;
 
     void floodFill        (PixelPoint seed, Color color) override;
     void drawGradientLine (PixelPoint p0, PixelPoint p1, Color colorStart, Color colorEnd) override;
     void clearScreen(Color color) override;
     void clearScreen() override;
+
+    PixelSize getTextBoundSize(String string) override;
+    PixelSize getTextBoundSize(FontSize fontSize, String string) override;
 
     FontSize getDefaultFontSize() override { return 1; };
 

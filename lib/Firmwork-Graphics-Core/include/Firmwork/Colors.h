@@ -7,9 +7,9 @@
 
 #include <stdint.h>
 #include <math.h>
-#include <Firmwork/Graphics.h> // for Color and ColorRGB
+#include <Firmwork/GraphicsTypes.h> // for Color and ColorRGB
 
-class GraphicsHelper {
+class Colors {
 public:
     // Convert 8-bit-per-channel RGB to Color in RGB888 hex form 0xRRGGBB (stored in uint32_t)
     static inline Color fromRGB(uint8_t r, uint8_t g, uint8_t b) {
@@ -135,6 +135,22 @@ public:
                    | (static_cast<uint16_t>(b >> 3));
         return v;
     }
+
+    // Blend two colors with ratio (0.0 = color1, 1.0 = color2)
+    static inline Color blend(Color color1, Color color2, float ratio) {
+        if (ratio <= 0.0f) return color1;
+        if (ratio >= 1.0f) return color2;
+
+        ColorRGB rgb1 = toRGB(color1);
+        ColorRGB rgb2 = toRGB(color2);
+
+        return fromRGB(
+            static_cast<uint8_t>(rgb1.r + (rgb2.r - rgb1.r) * ratio),
+            static_cast<uint8_t>(rgb1.g + (rgb2.g - rgb1.g) * ratio),
+            static_cast<uint8_t>(rgb1.b + (rgb2.b - rgb1.b) * ratio)
+        );
+    }
+
 
     // Named color constants in RGB888 (0xRRGGBB)
     static constexpr Color BLACK       = 0x000000u; //   0,   0,   0
