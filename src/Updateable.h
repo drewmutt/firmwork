@@ -8,9 +8,6 @@
 
 class Updateable
 {
-protected:
-    ~Updateable() = default;
-
 public:
         virtual void update() = 0;
 };

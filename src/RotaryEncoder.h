@@ -4,7 +4,7 @@
 #include "freertos/FreeRTOS.h"
 #include "freertos/task.h"
 
-class RotaryEncoder {
+class RotaryEncoder: public Updateable {
 public:
   using StepCb  = void(*)(int8_t dir); // +1 CW, -1 CCW
   using ClickCb = void(*)();
