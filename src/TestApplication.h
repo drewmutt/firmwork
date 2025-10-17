@@ -13,8 +13,10 @@
 #include "Application.h"
 #include "mesh/MacAddress.h"
 #include "mesh/MeshManager.h"
-#include <Firmwork/M5Graphics.h>
-#include <Firmwork/Bounds.h>
+// #include <Firmwork/M5Graphics.h>
+// #include <Firmwork/Bounds.h>
+// #include <Firmwork/GrayU8G2Graphics.h>
+#include "RotaryEncoder.h"
 
 class TestApplication: public Application
 {

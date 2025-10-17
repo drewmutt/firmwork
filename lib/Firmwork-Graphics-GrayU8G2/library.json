@@ -1,0 +1,8 @@
+{
+  "name": "Firmwork-Graphics-GrayU8G2",
+  "version": "1.0.0",
+  "description": "Firmwork optional graphics module",
+  "frameworks": ["arduino"],
+  "platforms": "*",
+  "build": { "includeDir": "include" }
+}

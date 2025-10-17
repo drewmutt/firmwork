@@ -104,6 +104,13 @@ void MeshManager::OnDataSent(const uint8_t *mac_addr, esp_now_send_status_t stat
         manager->dispatchOnDataSent(mac_addr, status);
 }
 
+#ifdef OLD_VERSION_ESP
+void MeshManager::OnDataReceived(const uint8_t *mac_addr, const uint8_t *data, int data_len)
+{
+    for(MeshManager *manager : managers)
+        manager->dispatchOnDataReceived(mac_addr, data, data_len);
+}
+#else
 void MeshManager::OnDataReceived(const esp_now_recv_info_t *info, const uint8_t *incomingData, int len)
 {
     if (!info) return;
@@ -111,7 +118,7 @@ void MeshManager::OnDataReceived(const esp_now_recv_info_t *info, const uint8_t 
     for(MeshManager *manager : managers)
         manager->dispatchOnDataReceived(mac_addr, incomingData, len);
 }
-
+#endif
 
 void MeshManager::setOnDataSentFunction(std::function<void(MeshManager::MessageReceipt)> aOnDataSentMethod)
 {

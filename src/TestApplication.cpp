@@ -20,9 +20,34 @@ typedef struct MyMessage: public Message
     byte unitType;
 } SensorMessage;
 
+// main.cpp
+#include <Arduino.h>
+#include "RotaryEncoder.h"
+
+constexpr gpio_num_t PIN_ENC_CLK = GPIO_NUM_32;
+constexpr gpio_num_t PIN_ENC_DT  = GPIO_NUM_19;
+constexpr gpio_num_t PIN_ENC_SW  = GPIO_NUM_33;
+
+RotaryEncoder enc(GPIO_NUM_32, PIN_ENC_DT, PIN_ENC_SW);
+
+int i = 0;
+void onRotate(int8_t dir)
+{
+    // dir: +1 clockwise, -1 counter-clockwise
+    i+= dir;
+    Serial.printf("ENC pos=%d pos=%d\n", (int)dir, i);
+
+}
+
+void onClick() {
+    Serial.println("ENC click");
+}
+
 void TestApplication::setup()
 {
     Serial.begin(9600);
+
+    enc.begin(onRotate, onClick);
 
     Bounds bounds({50,50}, {500, 1000});
 
@@ -80,7 +105,9 @@ void TestApplication::setup()
 
 void TestApplication::loop()
 {
-    ArduinoOTA.handle();
+    enc.update();
+    // ArduinoOTA.handle();
+    /*
     if(!WiFi.isConnected())
     {
         if (!MASTER)
@@ -94,9 +121,9 @@ void TestApplication::loop()
             Serial.println("sent message.. " + ErrorUtil::getDescriptionFromESPError(i));
             delay(1000);
         }
-    }
-    delay(1000);
-    Serial.println("loop");
+    }*/
+    // delay(1000);
+    // Serial.println("loop");
 
 }
 

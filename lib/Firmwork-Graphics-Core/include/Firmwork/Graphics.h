@@ -13,6 +13,7 @@ class Graphics {
 public:
        virtual ~Graphics() = default;
 
+    virtual void start();
     // Basic pixels and lines
     virtual void drawPixel        (PixelPoint pt, Color color) = 0;
     virtual void drawFastVLine    (PixelPoint start, int h, Color color) = 0;
@@ -75,6 +76,8 @@ public:
     virtual void clearScreen () = 0;
 
     virtual FontSize getDefaultFontSize() = 0;
+
+    virtual void update();
 };
 
 #endif // FIRMWORK_GRAPHICS_H
