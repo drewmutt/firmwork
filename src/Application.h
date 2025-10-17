@@ -37,8 +37,9 @@ memcpy(&NewMessageVarName, MessageDataVar.message, MessageDataVar.dataLength)
 
 class Application
 {
-    virtual ~Application() = default;
+
     public:
+        virtual ~Application() = default;
         static Application *application;
         virtual void setup() = 0;
         virtual void loop() = 0;
