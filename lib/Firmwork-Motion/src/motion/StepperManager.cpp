@@ -32,6 +32,14 @@ void StepperManager::moveToAbsolute(long pos, float speed)
     stepper->setSpeed(speed);
 }
 
+void StepperManager::moveToAbsoluteConstantSpeed(long pos, float speed)
+{
+    mode = STEPPER_MOVE_TO_CONSTANT;
+    stepper->moveTo(pos);
+    stepper->setMaxSpeed(speed);
+    stepper->setSpeed(speed);
+}
+
 void StepperManager::moveToAbsolute(long pos)
 {
     mode = STEPPER_MOVE_TO;
@@ -90,7 +98,7 @@ bool StepperManager::run(bool overrideLimits)
             // Limit hit
             if(limitMode == LIMIT_LOW)
             {
-                if((mode == STEPPER_MOVE_TO &&  (targetPosition() < currentPosition())) ||
+                if(( (mode == STEPPER_MOVE_TO||mode==STEPPER_MOVE_TO_CONSTANT) &&  (targetPosition() < currentPosition())) ||
                    (mode == STEPPER_MOVE_SPEED &&  speed() < 0)) {
                     stop(); // hmm
                     return false;
@@ -98,7 +106,7 @@ bool StepperManager::run(bool overrideLimits)
             }
             else if(limitMode == LIMIT_HIGH)
             {
-                if((mode == STEPPER_MOVE_TO &&  (targetPosition() > currentPosition())) ||
+                if(( (mode == STEPPER_MOVE_TO || mode==STEPPER_MOVE_TO_CONSTANT) &&  (targetPosition() > currentPosition())) ||
                    (mode == STEPPER_MOVE_SPEED &&  speed() > 0)) {
                     stop(); // hmm
                     return false;
@@ -109,6 +117,8 @@ bool StepperManager::run(bool overrideLimits)
 
     if(mode == STEPPER_MOVE_TO)
         stepper->run();
+    else if(mode == STEPPER_MOVE_TO_CONSTANT)
+        stepper->runSpeedToPosition();
     else if(mode == STEPPER_MOVE_SPEED)
         stepper->runSpeed();
 
@@ -124,7 +134,6 @@ long StepperManager::distanceToGo()
 {
     return stepper->distanceToGo();
 }
-
 
 long StepperManager::currentPosition()
 {

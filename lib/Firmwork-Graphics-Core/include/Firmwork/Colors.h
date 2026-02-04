@@ -40,6 +40,19 @@ public:
         return out;
     }
 
+    // Scale color components to ensure they don't exceed the given maximum value
+    static inline Color scaleLinear(Color color, uint8_t intensity)
+    {
+        ColorRGB rgb = toRGB(color);
+
+        float scale = static_cast<float>(intensity) / 255.0;
+        return fromRGB(
+            static_cast<uint8_t>(rgb.r * scale),
+            static_cast<uint8_t>(rgb.g * scale),
+            static_cast<uint8_t>(rgb.b * scale)
+        );
+    }
+
     // Convert HSV (h:0-360, s:0-1, v:0-1) to Color in RGB888 (0xRRGGBB)
     static inline Color fromHSV(float h, float s, float v) {
         // Clamp inputs
@@ -177,6 +190,7 @@ public:
     static constexpr Color SILVER      = 0xC0C0C0u; // 192, 192, 192
     static constexpr Color SKYBLUE     = 0x87CEEBu; // 135, 206, 235
     static constexpr Color VIOLET      = 0xB42EE2u; // 180,  46, 226
+    static constexpr Color TRANSPARENT      = 16777216; // 255, 255, 256!
 };
 
 #endif // FIRMWORK_GRAPHICSHELPER_H

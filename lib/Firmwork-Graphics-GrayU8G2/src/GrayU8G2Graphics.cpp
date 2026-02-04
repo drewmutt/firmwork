@@ -367,7 +367,7 @@ void GrayU8G2Graphics::fillArc(PixelPoint center, int r0, int r1, float angle0, 
 void GrayU8G2Graphics::drawTextChars(PixelPoint pt, FontSize fontSize, const char* text, Color color)
 {
     // U8G2 does not support arbitrary font scaling; we ignore fontSize here.
-    (void)fontSize;
+    // (void)fontSize;
     setColor(gfx_, color);
     gfx_.setFontPosTop(); // so y is top-aligned
     gfx_.drawStr(pt.x, pt.y, text ? text : "");
@@ -388,10 +388,15 @@ void GrayU8G2Graphics::drawTextPrintf(PixelPoint pt, FontSize fontSize, Color co
     gfx_.drawStr(pt.x, pt.y, buf);
 }
 
-void GrayU8G2Graphics::floodFill(PixelPoint seed, Color color) {
+void GrayU8G2Graphics::fillScreen(Color color) {
     // Without pixel readback, provide a simple filled disc as a reasonable stand-in
+    // Fill entire buffer with the given grayscale color
+    int w = gfx_.getDisplayWidth();
+    int h = gfx_.getDisplayHeight();
+    gfx_.clearBuffer();
     setColor(gfx_, color);
-    gfx_.drawDisc(seed.x, seed.y, 1, U8G2_DRAW_ALL); // 1px radius minimal fill
+    gfx_.drawBox(0, 0, w, h);
+    gfx_.sendBuffer();
 }
 
 void GrayU8G2Graphics::drawGradientLine(PixelPoint p0, PixelPoint p1, Color colorStart, Color colorEnd) {
@@ -418,17 +423,6 @@ void GrayU8G2Graphics::drawGradientLine(PixelPoint p0, PixelPoint p1, Color colo
         if (e2 <= dx) { err += dx; y0 += sy; }
         ++step;
     }
-}
-
-void GrayU8G2Graphics::clearScreen(Color color)
-{
-    // Fill entire buffer with the given grayscale color
-    int w = gfx_.getDisplayWidth();
-    int h = gfx_.getDisplayHeight();
-    gfx_.clearBuffer();
-    setColor(gfx_, color);
-    gfx_.drawBox(0, 0, w, h);
-    gfx_.sendBuffer();
 }
 
 void GrayU8G2Graphics::clearScreen()

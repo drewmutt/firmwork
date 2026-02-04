@@ -50,10 +50,9 @@ public:
     void drawTextChars(PixelPoint pt, FontSize fontSize, const char* text, Color color) override;
     void drawTextPrintf(PixelPoint pt, FontSize fontSize, Color color, const char* fmt, ...) override;
 
-    void floodFill        (PixelPoint seed, Color color) override;
-    void drawGradientLine (PixelPoint p0, PixelPoint p1, Color colorStart, Color colorEnd) override;
-    void clearScreen(Color color) override;
+    void fillScreen        (Color color) override;
     void clearScreen() override;
+    void drawGradientLine (PixelPoint p0, PixelPoint p1, Color colorStart, Color colorEnd) override;
 
     PixelSize getTextBoundSize(String string) override;
     PixelSize getTextBoundSize(FontSize fontSize, String string) override;

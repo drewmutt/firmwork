@@ -19,14 +19,19 @@ enum class BoundsAnchor {
     BOTTOM_CENTER
 };
 
+
 struct Bounds {
-        PixelPoint const pt = {0, 0};
-        PixelSize const size = {0, 0};
+        static PixelPoint translateToPixelPoint(Bounds bounds, PixelPoint offset) { return PixelPoint{bounds.pt.x + offset.x, bounds.pt.y + offset.y}; }
+        static Bounds translate(Bounds bounds, PixelPoint offset) { return Bounds{{bounds.pt.x + offset.x, bounds.pt.y + offset.y}, {bounds.size.w, bounds.size.h}}; }
+        static Bounds offset(Bounds bounds, int offset) { return Bounds{{bounds.pt.x + offset, bounds.pt.y + offset}, {bounds.size.w - (offset * 2), bounds.size.h - (offset * 2)}}; }
+
+        PixelPoint pt = {0, 0};
+        PixelSize size = {0, 0};
         BoundsAnchor anchor = BoundsAnchor::TOP_LEFT;
     
-        explicit Bounds(PixelSize size) : size(size) {};
-        explicit Bounds() = default;
-        explicit Bounds(PixelPoint origin, PixelSize size): pt(origin), size(size) {};
+        Bounds(PixelSize size) : size(size) {};
+        Bounds() = default;
+        Bounds(PixelPoint origin, PixelSize size): pt(origin), size(size) {};
 
         PixelPoint middleCenter() { return convertAnchorPoint(pt, size, anchor, BoundsAnchor::MIDDLE_CENTER); }
         PixelPoint middleLeft() { return convertAnchorPoint(pt, size, anchor, BoundsAnchor::MIDDLE_LEFT); }

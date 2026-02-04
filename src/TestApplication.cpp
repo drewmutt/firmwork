@@ -3,11 +3,14 @@
 //
 
 #include <HardwareSerial.h>
-#include "TestApplication.h"
+#include <TestApplication.h>
 #include "mesh/MeshNode.h"
-#include "ErrorUtil.h"
+#include "../lib/Firmwork-Mesh/src/mesh/ErrorUtil.h"
 #include "Wifi.h"
-
+// main.cpp
+#include <Arduino.h>
+#include "../lib/Firmwork-Common/include/RotaryEncoder.h"
+#include "Firmwork/ui/UILayout.h"
 
 #define MASTER false
 MeshNode MasterMeshNode({0x44, 0x1d, 0x64, 0xf8, 0x01, 0x1c});
@@ -20,15 +23,9 @@ typedef struct MyMessage: public Message
     byte unitType;
 } SensorMessage;
 
-// main.cpp
-#include <Arduino.h>
-#include "RotaryEncoder.h"
 
-constexpr gpio_num_t PIN_ENC_CLK = GPIO_NUM_32;
-constexpr gpio_num_t PIN_ENC_DT  = GPIO_NUM_19;
-constexpr gpio_num_t PIN_ENC_SW  = GPIO_NUM_33;
 
-RotaryEncoder enc(GPIO_NUM_32, PIN_ENC_DT, PIN_ENC_SW);
+RotaryEncoder enc(32, 19, 33);
 
 int i = 0;
 void onRotate(int8_t dir)
@@ -47,12 +44,12 @@ void TestApplication::setup()
 {
     Serial.begin(9600);
 
-    enc.begin(onRotate, onClick);
+    // enc.begin(onRotate, onClick);
 
-    Bounds bounds({50,50}, {500, 1000});
+    // Bounds bounds({50,50}, {500, 1000});
 
-    auto top_left_of = bounds.topLeftOf({100, 200}, BoundsAnchor::BOTTOM_RIGHT);
-    Serial.println("Top left of: " + String(top_left_of.x) + ", " + String(top_left_of.y));
+    // auto top_left_of = bounds.topLeftOf({100, 200}, BoundsAnchor::BOTTOM_RIGHT);
+    // Serial.println("Top left of: " + String(top_left_of.x) + ", " + String(top_left_of.y));
 
     delay(2000);
     Serial.println("Role: " + String(MASTER==true?"MASTER":"SLAVE"));;

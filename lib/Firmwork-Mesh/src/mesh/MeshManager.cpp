@@ -98,11 +98,7 @@ void MeshManager::changeSelfMacAddress(MacAddress macAddress)
 }
 
 
-void MeshManager::OnDataSent(const uint8_t *mac_addr, esp_now_send_status_t status)
-{
-    for(MeshManager *manager : managers)
-        manager->dispatchOnDataSent(mac_addr, status);
-}
+
 
 #ifdef OLD_VERSION_ESP
 void MeshManager::OnDataReceived(const uint8_t *mac_addr, const uint8_t *data, int data_len)
@@ -110,6 +106,12 @@ void MeshManager::OnDataReceived(const uint8_t *mac_addr, const uint8_t *data, i
     for(MeshManager *manager : managers)
         manager->dispatchOnDataReceived(mac_addr, data, data_len);
 }
+void MeshManager::OnDataSent(const uint8_t *mac_addr, esp_now_send_status_t status)
+{
+    for(MeshManager *manager : managers)
+        manager->dispatchOnDataSent(mac_addr, status);
+}
+
 #else
 void MeshManager::OnDataReceived(const esp_now_recv_info_t *info, const uint8_t *incomingData, int len)
 {
@@ -118,6 +120,12 @@ void MeshManager::OnDataReceived(const esp_now_recv_info_t *info, const uint8_t 
     for(MeshManager *manager : managers)
         manager->dispatchOnDataReceived(mac_addr, incomingData, len);
 }
+void MeshManager::OnDataSent(const esp_now_send_info_t *tx_info, esp_now_send_status_t status)
+{
+    for(MeshManager *manager : managers)
+        manager->dispatchOnDataSent(tx_info->des_addr, status);
+}
+
 #endif
 
 void MeshManager::setOnDataSentFunction(std::function<void(MeshManager::MessageReceipt)> aOnDataSentMethod)

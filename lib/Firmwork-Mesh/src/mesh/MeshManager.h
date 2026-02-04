@@ -11,7 +11,7 @@
 #include "MeshNode.h"
 #include <esp_now.h>
 #include <ArduinoOTA.h>
-#include "Application.h"
+#include "../../../Firmwork-Common/include/Application.h"
 
 #if ESP_IDF_VERSION < ESP_IDF_VERSION_VAL(5,0,0)
 #define OLD_VERSION_ESP
@@ -74,7 +74,7 @@ class MeshManager
     static void IRAM_ATTR OnDataSent(const uint8_t *mac_addr, esp_now_send_status_t status);
     static void IRAM_ATTR OnDataReceived(const uint8_t *mac_addr, const uint8_t *data, int data_len);
 #else
-    static void IRAM_ATTR OnDataSent(const uint8_t *mac_addr, esp_now_send_status_t status);
+    static void IRAM_ATTR OnDataSent(const esp_now_send_info_t *tx_info, esp_now_send_status_t status);
     static void IRAM_ATTR OnDataReceived(const esp_now_recv_info_t * info, const uint8_t *incomingData, int len);
 #endif
 

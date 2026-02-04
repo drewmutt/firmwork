@@ -1,12 +1,20 @@
 {
   "name": "Firmwork-Graphics-M5",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Firmwork optional graphics module",
   "frameworks": "*",
   "platforms": "*",
   "dependencies": [
-    { "name": "M5GFX", "owner": "m5stack" },
-    { "name": "M5Unified", "owner": "m5stack" }
+    {
+      "name": "m5stack/M5GFX",
+      "version": "*"
+    },
+    {
+      "name": "m5stack/M5Unified",
+      "version": "*"
+    }
   ],
-  "build": { "includeDir": "include" }
+  "build": {
+    "includeDir": "include"
+  }
 }

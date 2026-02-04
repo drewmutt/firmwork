@@ -65,14 +65,12 @@ public:
     void drawTextStringInBounds(Bounds bounds, BoundsAnchor justify, String string, Color color) { drawTextStringInBounds(bounds, justify, getDefaultFontSize(), string, color); }
     void drawTextStringInBounds(Bounds bounds, BoundsAnchor justify, String string) { drawTextStringInBounds(bounds, justify, getDefaultFontSize(), string, Colors::WHITE); }
 
-
     virtual PixelSize getTextBoundSize(String string) = 0;
     virtual PixelSize getTextBoundSize(FontSize fontSize, String string) = 0;
 
-    virtual void floodFill        (PixelPoint seed, Color color) = 0;
+    virtual void fillScreen        (Color color) = 0;
     virtual void drawGradientLine (PixelPoint p0, PixelPoint p1, Color colorStart, Color colorEnd) = 0;
 
-    virtual void clearScreen (Color color) = 0;
     virtual void clearScreen () = 0;
 
     virtual FontSize getDefaultFontSize() = 0;

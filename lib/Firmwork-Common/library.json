@@ -1,0 +1,11 @@
+{
+  "name": "Firmwork-Common",
+  "version": "1.0.1",
+  "description": "Firmwork global lib",
+  "frameworks": "*",
+  "platforms": "*",
+  "build": {
+    "includeDir": "include"
+  },
+  "dependencies": []
+}

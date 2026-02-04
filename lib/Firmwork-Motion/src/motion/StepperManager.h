@@ -10,6 +10,7 @@ typedef enum StepperMode
 {
     STEPPER_NONE = 'n',
     STEPPER_MOVE_TO = 't',
+    STEPPER_MOVE_TO_CONSTANT = 'c',
     STEPPER_MOVE_SPEED = 's',
 } StepperMode;
 
@@ -45,6 +46,7 @@ class StepperManager
         StepperManager(AccelStepper *pStepper, boolean (*pLimitFunction)(void), LimitMode limitMode);
         void moveRelative(long pos, float speed);
         void moveToAbsolute(long pos, float speed);
+        void moveToAbsoluteConstantSpeed(long pos, float speed);
         void softStop();
 };
 

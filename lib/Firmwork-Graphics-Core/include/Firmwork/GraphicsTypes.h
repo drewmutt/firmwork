@@ -7,19 +7,24 @@
 #include <stdint.h>
 
 // Basic geometry types
+#define IS_PIXEL_POINT_ZERO(pp) pp.x == 0 && pp.y == 0
 struct PixelPoint {
-    const int x;
-    const int y;
+    int x;
+    int y;
     PixelPoint(int x, int y);
+    [[nodiscard]] PixelPoint add(PixelPoint point) const { return PixelPoint{this->x + point.x, this->y + point.y}; }
+    [[nodiscard]] PixelPoint subtract(PixelPoint point) const { return PixelPoint{this->x - point.x, this->y - point.y}; }
 };
 
+#define IS_PIXEL_SIZE_ZERO(ps) ps.w == 0 && ps.h == 0
 struct PixelSize {
-    const int w;
-    const int h;
+    int w;
+    int h;
     PixelSize(int w, int h);
 };
 
 
+#define COLOR_IS_TRANSPARENT(col) (col > 16777215) // > 0xFFFFFF
 // Color types
 using Color = uint32_t; // RGB888 stored as 0xRRGGBB
 struct ColorRGB { uint8_t r, g, b; };

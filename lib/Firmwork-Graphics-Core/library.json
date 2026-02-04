@@ -1,8 +1,11 @@
 {
-  "name": "Firmwork-Graphics",
-  "version": "1.0.0",
+  "name": "Firmwork-Graphics-Core",
+  "version": "1.0.1",
   "description": "Firmwork optional graphics module",
   "frameworks": "*",
   "platforms": "*",
-  "build": { "includeDir": "include" }
+  "build": {
+    "includeDir": "include"
+  },
+  "dependencies": []
 }

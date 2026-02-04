@@ -111,8 +111,8 @@ void M5Graphics::drawTextPrintf(PixelPoint pt, FontSize fontSize, Color color, c
     va_end(arg);
 }
 
-void M5Graphics::floodFill(PixelPoint seed, Color color) {
-    gfx_.floodFill(seed.x, seed.y, color);
+void M5Graphics::fillScreen(Color color) {
+    gfx_.fillScreen(color);
 }
 
 void M5Graphics::drawGradientLine(PixelPoint p0, PixelPoint p1, Color colorStart, Color colorEnd) {
@@ -123,12 +123,6 @@ void M5Graphics::drawGradientLine(PixelPoint p0, PixelPoint p1, Color colorStart
     (void)colorEnd;
     gfx_.drawLine(p0.x, p0.y, p1.x, p1.y, FW_TO565(colorStart));
 #endif
-}
-
-void M5Graphics::clearScreen(Color color)
-{
-    gfx_.setBaseColor(color);
-    gfx_.clear();
 }
 
 void M5Graphics::clearScreen()
