@@ -11,10 +11,11 @@
 #include "Firmwork/Colors.h"
 #include "UIElement.h"
 #include <optional>
+#include "TitledUIElement.h"
 
 #include "Selectable.h"
 
-class MenuUIElement: public UIElement, public Selectable
+class MenuUIElement: public TitledUIElement, public Selectable
 {
     std::vector<MenuItemUIElement *> menuItems = {};
     int selectedItemIndex = -1;
@@ -26,6 +27,7 @@ public:
     {
         outlineStyle = new LineStyle(1, Colors::WHITE);
         childLayout = new VerticalUILayout();
+        initTitleHeader();
     }
 
     void chooseItemAtSelectedIndex() override

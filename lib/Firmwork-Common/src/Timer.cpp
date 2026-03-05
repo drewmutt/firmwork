@@ -10,10 +10,10 @@ unsigned long long int Timer::getLastTriggerMSec() const
     return lastTriggerMSec;
 }
 
-void Timer::setLastTriggerMSec(unsigned long long int pLastTriggerMSec)
-{
-    Timer::lastTriggerMSec = pLastTriggerMSec;
-}
+// void Timer::setLastTriggerMSec(unsigned long long int pLastTriggerMSec)
+// {
+    // Timer::lastTriggerMSec = pLastTriggerMSec;
+// }
 
 unsigned long long int Timer::getDelayMSec() const
 {
@@ -25,6 +25,18 @@ void Timer::setDelayMSec(unsigned long long int pDelayMSec)
     Timer::delayMSec = pDelayMSec;
 }
 
+void Timer::restart(unsigned long long int pDelayMSec)
+{
+    restart();
+    delayMSec = pDelayMSec;
+}
+
+void Timer::restart()
+{
+    enabled = true;
+    lastTriggerMSec = millis();
+    triggerCount = 0;
+}
 
 // Method sig be like:
 // void onTakeSonarReading(unsigned long long triggerCount, Timer *timer)

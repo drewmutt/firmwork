@@ -1,0 +1,16 @@
+{
+  "name": "Firmwork-BT",
+  "version": "1.0.0",
+  "description": "Firmwork BLE UART manager",
+  "frameworks": "*",
+  "platforms": "*",
+  "build": {
+    "includeDir": "include"
+  },
+  "dependencies": [
+    {
+      "name": "bblanchon/ArduinoJson",
+      "version": "^6.21.5"
+    }
+  ]
+}

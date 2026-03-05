@@ -20,6 +20,7 @@ libs=(
   "Firmwork-Graphics-M5"
   "Firmwork-Mesh"
   "Firmwork-Motion"
+  "Firmwork-BT"
 )
 
 for lib in "${libs[@]}"; do
@@ -41,6 +42,9 @@ for lib in "${libs[@]}"; do
 
   # Add/fix dependencies (full owner/name)
   case "$lib" in
+    "Firmwork-BT")
+          jq '.dependencies = [{"name": "bblanchon/ArduinoJson", "version": "*"}]' library.json > tmp.json && mv tmp.json library.json
+          ;;
     "Firmwork-Motion")
       jq '.dependencies = [{"name": "waspinator/AccelStepper", "version": "*"}]' library.json > tmp.json && mv tmp.json library.json
       ;;

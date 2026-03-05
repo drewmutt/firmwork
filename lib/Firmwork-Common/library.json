@@ -7,5 +7,10 @@
   "build": {
     "includeDir": "include"
   },
-  "dependencies": []
+  "dependencies": [
+    {
+      "name": "adafruit/RTClib",
+      "version": "^2.1.4"
+    }
+  ]
 }

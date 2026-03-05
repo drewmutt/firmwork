@@ -27,9 +27,10 @@ class Timer:public Updateable
         void setTriggerFunction(std::function<void(TriggerData)> cb) { triggerFunction = std::move(cb); }
 
         unsigned long long int getLastTriggerMSec() const;
-        void setLastTriggerMSec(unsigned long long int lastTriggerMSec);
+        // void setLastTriggerMSec(unsigned long long int lastTriggerMSec); <-- use restart
         unsigned long long int getDelayMSec() const;
         void setDelayMSec(unsigned long long int pDelayMSec);
+
         void setTriggerFunction(void (*triggerFunction)(TriggerData));
         void update() override;
         unsigned long long int getTriggerCount() const;
@@ -37,6 +38,11 @@ class Timer:public Updateable
         boolean getEnabled() const;
         void setEnabled(boolean enabled);
         void setIsOneShot(bool aIsOneShot) { this->isOneShot = aIsOneShot; }
+
+        // Helpers, it's started by default
+        void restart(unsigned long long int pDelayMSec);
+        void restart();
+        void disable() { setEnabled(false);}
 
     private:
         unsigned long long delayMSec{};

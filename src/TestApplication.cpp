@@ -10,7 +10,6 @@
 // main.cpp
 #include <Arduino.h>
 #include "../lib/Firmwork-Common/include/RotaryEncoder.h"
-#include "Firmwork/ui/UILayout.h"
 
 #define MASTER false
 MeshNode MasterMeshNode({0x44, 0x1d, 0x64, 0xf8, 0x01, 0x1c});
@@ -43,6 +42,28 @@ void onClick() {
 void TestApplication::setup()
 {
     Serial.begin(9600);
+    this->settings.begin();
+    this->logSettings("Settings loaded from EEPROM");
+
+    this->settings.addOnChangeListener([this](const String& key)
+    {
+        Serial.println("Setting changed over app/BT: " + key + " (persisted to EEPROM)");
+        this->logSettingByKey(key);
+    });
+
+    this->bleUartManager = new BLEUartManager("truckESP32", &this->settings);
+    if (this->bleUartManager->begin())
+    {
+        Serial.println("BLE UART ready");
+        Serial.println("Use the Settings BLE service to read/write each setting characteristic directly.");
+        Serial.println("Example writes: speed=\"42\", threshold=\"2.5\", enabled=\"true\", deviceLabel=\"truck-01\"");
+        Serial.println("Reboot and watch 'Settings loaded from EEPROM' to verify persistence.");
+    }
+    else
+    {
+        Serial.println("BLE UART failed to start");
+    }
+
 
     // enc.begin(onRotate, onClick);
 
@@ -129,6 +150,29 @@ void TestApplication::handleException(std::runtime_error error)
     Serial.println("======= EXCEPTION ============");
     Serial.println(error.what());
     Serial.println("===================");
+}
+
+void TestApplication::logSettings(const char* prefix)
+{
+    Serial.println(
+        String(prefix) +
+        ": speed=" + String(static_cast<int>(this->settings.speed)) +
+        ", threshold=" + String(static_cast<float>(this->settings.threshold), 2) +
+        ", enabled=" + String(static_cast<bool>(this->settings.enabled) ? "true" : "false") +
+        ", deviceLabel=" + String(static_cast<String>(this->settings.deviceLabel))
+    );
+}
+
+void TestApplication::logSettingByKey(const String& key)
+{
+    if (key == "speed")
+        Serial.println("speed=" + String(static_cast<int>(this->settings.speed)));
+    else if (key == "threshold")
+        Serial.println("threshold=" + String(static_cast<float>(this->settings.threshold), 2));
+    else if (key == "enabled")
+        Serial.println("enabled=" + String(static_cast<bool>(this->settings.enabled) ? "true" : "false"));
+    else if (key == "deviceLabel")
+        Serial.println("deviceLabel=" + String(static_cast<String>(this->settings.deviceLabel)));
 }
 
 void TestApplication::onGotData(MeshManager::MessageData messageData)

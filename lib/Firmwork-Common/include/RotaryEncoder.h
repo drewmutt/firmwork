@@ -3,7 +3,6 @@
 #include "driver/gpio.h"
 #include "freertos/FreeRTOS.h"
 #include "freertos/task.h"
-#include "soc/gpio_struct.h"
 class RotaryEncoder: public Updateable {
 public:
   using StepCb = std::function<void(RotaryEncoder*, int8_t)>;
@@ -23,13 +22,7 @@ public:
     pinMode((uint8_t)_dt,  INPUT_PULLUP);
     pinMode((uint8_t)_sw,  INPUT_PULLUP);
 
-    // precompute regs/masks for ISR (no literals there)
-    if ((int)_clk < 32) { _clkReg=&GPIO.in;      _clkMask=1u<< (int)_clk; }
-    else                { _clkReg=&GPIO.in1.val; _clkMask=1u<<((int)_clk-32); }
-    if ((int)_dt  < 32) { _dtReg =&GPIO.in;      _dtMask =1u<< (int)_dt;  }
-    else                { _dtReg =&GPIO.in1.val; _dtMask =1u<<((int)_dt -32); }
-
-    _prev = (fastRead(_clkReg,_clkMask)<<1) | fastRead(_dtReg,_dtMask);
+    _prev = (gpio_get_level(_clk) << 1) | gpio_get_level(_dt);
 
     // CHANGE on both lines; ISR only queues samples
     attachInterruptArg((uint8_t)_clk, isrLog, this, CHANGE);
@@ -127,23 +120,16 @@ private:
   uint8_t _edgeDebounceMs = 5;
   uint8_t _btnDebounceMs  = 20;
 
-  // IRAM-safe bit read for ISR setup
-  static inline int IRAM_ATTR fastRead(volatile uint32_t* reg, uint32_t mask) { return (*reg & mask) ? 1 : 0; }
-
   // ISR: read pins, enqueue 2-bit state. No branches, no literals.
   static void IRAM_ATTR isrLog(void* arg) {
     auto* s = static_cast<RotaryEncoder*>(arg);
-    const uint8_t curr = ( ((*s->_clkReg & s->_clkMask)?1:0) << 1 ) | ((*s->_dtReg & s->_dtMask)?1:0);
+    const uint8_t curr = (gpio_get_level(s->_clk) << 1) | gpio_get_level(s->_dt);
     const uint8_t w = s->_rbW;
     const uint8_t n = (uint8_t)((w + 1) & s->_rbMask);
     if (n != s->_rbR) { s->_rb[w] = curr; s->_rbW = n; } // drop if full
   }
 
   const gpio_num_t _clk, _dt, _sw;
-
-  // precomputed for ISR
-  volatile uint32_t* _clkReg=nullptr; uint32_t _clkMask=0;
-  volatile uint32_t* _dtReg =nullptr; uint32_t _dtMask =0;
 
   // ring buffer for ISR→task handoff
   static constexpr uint8_t _rbSize = 32;

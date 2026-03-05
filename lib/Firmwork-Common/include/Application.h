@@ -58,7 +58,6 @@ class Application
             this->addUpdateable(timer);
             return timer;
         }
-
     protected:
 
 };
